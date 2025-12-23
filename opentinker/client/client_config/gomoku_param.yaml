@@ -78,5 +78,5 @@ scheduler_url: "http://0.0.0.0:8780"
 scheduler_api_key: otk_98b8db24ccd64c92e1fdd9a232e209fa # this is user id
 
 # GPU settings
-num_gpus: 4
+num_gpus: 2
 
