@@ -168,7 +168,9 @@ class Geo3KToolGame(AbstractGame):
         )
     
     def _extract_boxed(self, text: str) -> str:
-        """Extract answer from \\boxed{} format.
+        """Extract answer from \\boxed{} format with nested brace support.
+        
+        Uses depth counting to correctly handle nested braces like \\frac{8}{3}.
         
         Args:
             text: Text containing \\boxed{answer}
@@ -176,10 +178,29 @@ class Geo3KToolGame(AbstractGame):
         Returns:
             Extracted answer or "(no boxed answer)" if not found
         """
-        # Match \boxed{...}
-        boxed_match = re.search(r'\\boxed\{([^}]+)\}', text)
-        if boxed_match:
-            return boxed_match.group(1).strip()
+        # Find the last occurrence of \boxed{
+        start_pos = text.rfind(r'\boxed{')
+        if start_pos == -1:
+            return "(no boxed answer)"
+        
+        # Extract content after \boxed{
+        content = text[start_pos + len(r'\boxed{'):]
+        
+        # Use depth counting to find matching closing brace
+        depth = 0
+        end_pos = -1
+        for i, char in enumerate(content):
+            if char == '{':
+                depth += 1
+            elif char == '}':
+                if depth == 0:
+                    end_pos = i
+                    break
+                depth -= 1
+        
+        if end_pos != -1:
+            return content[:end_pos].strip()
+        
         return "(no boxed answer)"
     
     def _compute_reward(self, solution_str: str) -> float:
