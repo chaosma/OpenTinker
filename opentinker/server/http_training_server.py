@@ -1795,6 +1795,7 @@ def launch_server(
                 namespace=_server_cfg.ray.namespace,
                 num_gpus=_server_cfg.trainer.n_gpus_per_node,  # Explicitly specify number of GPUs
                 ignore_reinit_error=True,
+                include_dashboard=False,
             )
         else:
             # Connect to existing Ray cluster at specific address
@@ -1803,6 +1804,7 @@ def launch_server(
                 address=_server_cfg.ray.address,
                 namespace=_server_cfg.ray.namespace,
                 ignore_reinit_error=True,
+                include_dashboard=False,
             )
         
         # Verify GPU availability

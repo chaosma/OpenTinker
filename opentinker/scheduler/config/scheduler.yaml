@@ -21,3 +21,8 @@ enable_auth: false  # Set to false to disable authentication
 
 # Path to SQLite user database
 user_db_path: "scheduler_users.db"
+
+# Ray kwargs
+ray_kwargs:
+  ray_init:
+    include_dashboard: false

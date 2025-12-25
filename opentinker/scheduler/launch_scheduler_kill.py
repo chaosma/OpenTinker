@@ -138,9 +138,11 @@ async def main_async(cfg: DictConfig):
     # Initialize Ray if not already initialized
     if not ray.is_initialized():
         logger.info("Initializing Ray...")
+        ray_init_kwargs = cfg.get("ray_kwargs", {}).get("ray_init", {})
         ray.init(
             ignore_reinit_error=True,
             logging_level=logging.INFO,
+            **ray_init_kwargs,
         )
         logger.info("Ray initialized successfully")
     else:
