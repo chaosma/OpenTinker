@@ -59,10 +59,10 @@ class ALFWorldGame(AbstractGame):
         "pick_two_obj_and_place",
     ]
     
-    # Class-level cache for shared ALFWorld environments
-    # Key: (config_path, split) -> initialized environment
+    # Process-level cache for ALFWorld environments (safe within same process)
+    # Key: (config_path, split, num_games) -> initialized environment
+    # Note: Each Ray worker process gets its own cache, avoiding cross-process issues
     _shared_envs: dict = {}
-    _shared_configs: dict = {}
     
     def __init__(
         self,
@@ -96,7 +96,8 @@ class ALFWorldGame(AbstractGame):
         # Load ALFWorld config
         self._load_alfworld_config()
         
-        # Game state (instance-specific)
+        # Game state (instance-specific, NOT shared)
+        self._env = None  # Will be set from shared cache in reset()
         self._current_obs = None
         self._current_info = None
         self._step_count = 0
@@ -151,25 +152,22 @@ class ALFWorldGame(AbstractGame):
             }
     
     def _init_env(self):
-        """Initialize ALFWorld environment (shared across instances).
+        """Initialize ALFWorld environment using process-level cache.
         
-        Uses class-level cache to avoid re-loading games for each instance.
+        The environment is shared within the same process to avoid repeated
+        loading of game files (which takes ~4 seconds for 8810 games).
+        Each Ray worker process gets its own cached environment.
         """
         cache_key = (self.config_path, self.split, self.num_games)
         
         if cache_key not in ALFWorldGame._shared_envs:
-            print(f"[ALFWorldGame] Initializing shared environment for split='{self.split}'...")
-            # Create the text world environment using new API
+            print(f"[ALFWorldGame] Initializing environment for split='{self.split}', num_games={self.num_games}...")
             env_type = self._config['env']['type']
-            # New ALFWorld API uses get_environment() to get the class
             env_class = alfworld_env.get_environment(env_type)
             env = env_class(self._config)
-            env = env.init_env(batch_size=1)
-            ALFWorldGame._shared_envs[cache_key] = env
-            ALFWorldGame._shared_configs[cache_key] = self._config
-            print(f"[ALFWorldGame] Shared environment initialized and cached.")
+            ALFWorldGame._shared_envs[cache_key] = env.init_env(batch_size=1)
+            print(f"[ALFWorldGame] Environment cached (PID: {os.getpid()})")
         
-        # Use the shared environment
         self._env = ALFWorldGame._shared_envs[cache_key]
     
     def reset(self, task_type: Optional[str] = None, seed: Optional[int] = None, **kwargs) -> str:

@@ -13,7 +13,7 @@ enable_tracing: true
 weave_project: null
 
 # WandB (optional)
-wandb_key: null
+wandb_key: 2ed6f8544ac3e30d5c08879166cc10d9c6232448
 
 # Model and tokenizer
 tokenizer_path: null
@@ -45,9 +45,10 @@ algorithm: "agent_loop"
 #   - "grpo"          : Standard GRPO (outcome-only advantage)
 #   - "grpo_per_step" : Per-step GRPO with return-based advantages (for multi-turn tasks)
 #   - "gae"           : Generalized Advantage Estimation (for PPO, requires critic)
-adv_estimator: "grpo_per_step"
-# rollout_n: number of samples per prompt for GRPO/grpo_per_step (only used when adv_estimator=grpo or grpo_per_step)
-rollout_n: 16
+adv_estimator: "gae"
+# rollout_n: number of samples per prompt for GRPO/grpo_per_step
+# For PPO (gae), rollout_n is typically 1
+rollout_n: 1
 
 # Interaction configuration
 interaction:
@@ -55,7 +56,7 @@ interaction:
   class_path: opentinker.environment.gym_environment_interaction.GymEnvironmentInteraction
   config:
     env_host: 0.0.0.0
-    env_port: 8082
+    env_port: 8092
     env_endpoint: http://${interaction.config.env_host}:${interaction.config.env_port}
     max_steps: 100  # ALFWorld episodes can be longer
     max_total_steps: 50  # Max environment step calls
@@ -78,4 +79,4 @@ scheduler_url: "http://0.0.0.0:8780"
 scheduler_api_key: otk_98b8db24ccd64c92e1fdd9a232e209fa
 
 # GPU settings
-num_gpus: 2
+num_gpus: 4

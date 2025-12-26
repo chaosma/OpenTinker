@@ -1,12 +1,15 @@
 #!/bin/bash
 # Convenience script to launch the job scheduler
 
-export VLLM_USE_FLASHINFER_SAMPLER=0
-export VLLM_DISABLE_FLASHINFER_PREFILL=1
-export VLLM_DISABLE_SLEEP_MODE=1
+# Set CUDA 12.8 environment explicitly
+export CUDA_HOME=$HOME/local/cuda-12.8
+export PATH=$CUDA_HOME/bin:$PATH
+export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
 
-#export CUDA_HOME="/home/yixingc/.conda/envs/mae/cuda-13.0"
-#export PATH="$CUDA_HOME/bin:$PATH"
+export ROLLOUT_TRACE_DIR="/home/haofeiy2/OpenTinker/traces"
+export NVCC_EXECUTABLE=$CUDA_HOME/bin/nvcc
+export TORCH_CUDA_ARCH_LIST="9.0"
+export FLASHINFER_HOMOGENEOUS_MS=1
 
 # Default configuration
 AVAILABLE_GPUS="[0,1,2,3,4,5,6,7,8,9]"
