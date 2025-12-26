@@ -1,9 +1,9 @@
-# Gomoku Training Configuration
-# Use with: python gomoku_client.py
+# ALFWorld Training Configuration
+# Use with: python alfworld_rl.py
 
 # Project settings
 project_name: opentinker
-experiment_name: gomoku_training
+experiment_name: alfworld_training
 
 # Logging
 logger_backends: ["console","wandb"]
@@ -15,10 +15,8 @@ weave_project: null
 # WandB (optional)
 wandb_key: 2ed6f8544ac3e30d5c08879166cc10d9c6232448
 
-
 # Model and tokenizer
 tokenizer_path: null
-
 
 # Training parameters
 batch_size: 4
@@ -47,39 +45,38 @@ algorithm: "agent_loop"
 #   - "grpo"          : Standard GRPO (outcome-only advantage)
 #   - "grpo_per_step" : Per-step GRPO with return-based advantages (for multi-turn tasks)
 #   - "gae"           : Generalized Advantage Estimation (for PPO, requires critic)
-adv_estimator: "grpo_per_step"
-# rollout_n: number of samples per prompt for GRPO/grpo_per_step (only used when adv_estimator=grpo or grpo_per_step)
-rollout_n: 16
+adv_estimator: "gae"
+# rollout_n: number of samples per prompt for GRPO/grpo_per_step
+# For PPO (gae), rollout_n is typically 1
+rollout_n: 1
 
 # Interaction configuration
 interaction:
-  name: gomoku
+  name: alfworld
   class_path: opentinker.environment.gym_environment_interaction.GymEnvironmentInteraction
   config:
     env_host: 0.0.0.0
-    env_port: 8088
+    env_port: 8092
     env_endpoint: http://${interaction.config.env_host}:${interaction.config.env_port}
-    max_steps: 81 # 这是后端GymEnvironmentInteraction的参数
-    max_total_steps: 39  # 调用环境的step方法的最大次数限制（防止invalid move hacking）
-    max_initial_moves: 0
-    board_size: 9
+    max_steps: 100  # ALFWorld episodes can be longer
+    max_total_steps: 50  # Max environment step calls
     observation_template: "{observation}"
-    empty_board_prob: 1.0
+    # ALFWorld specific settings
+    split: train  # train, eval_in_distribution, eval_out_of_distribution
 
 
 multi_turn:
-    max_user_turns: ${interaction.config.max_total_steps} # 这是vllm的参数
-    max_assistant_turns: ${interaction.config.max_total_steps} # 这是vllm的参数
-    max_tokens_per_turn: 256  # Per-turn response limit (optional, null for no limit)
+    max_user_turns: ${interaction.config.max_total_steps}
+    max_assistant_turns: ${interaction.config.max_total_steps}
+    max_tokens_per_turn: 512  # Per-turn response limit (optional, null for no limit)
     # Weave tracing (optional - runs on SERVER side)
-    weave_project: "zsqzz/gomoku-env-test"  # W&B project for tracing {'message': 'Entity opentinker not found', 'path': ['upsertModel']}
-    experiment_name: "gomoku_interaction"  # Experiment name in Weave
+    weave_project: "zsqzz/alfworld-env-test"
+    experiment_name: "alfworld_interaction"
 
 
 # Scheduler settings
 scheduler_url: "http://0.0.0.0:8780"
-scheduler_api_key: otk_98b8db24ccd64c92e1fdd9a232e209fa # this is user id
+scheduler_api_key: otk_98b8db24ccd64c92e1fdd9a232e209fa
 
 # GPU settings
-num_gpus: 2
-
+num_gpus: 4
