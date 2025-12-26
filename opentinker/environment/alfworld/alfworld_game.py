@@ -16,6 +16,7 @@ import os
 import random
 import re
 from typing import Any, Dict, List, Optional, Tuple
+import logging
 
 from opentinker.environment.base_game import AbstractGame, StepResult
 
@@ -26,7 +27,7 @@ try:
     ALFWORLD_AVAILABLE = True
 except ImportError:
     ALFWORLD_AVAILABLE = False
-    print("Warning: alfworld not installed. Install with: pip install alfworld")
+    logging.warning("alfworld not installed. Install with: pip install alfworld")
 
 
 class ALFWorldGame(AbstractGame):
