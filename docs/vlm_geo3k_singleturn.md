@@ -21,13 +21,23 @@ bash opentinker/scripts/launch_scheduler.sh --scheduler-port <scheduler_port>
 python opentinker/environment/geo3k/geo3k_server.py --port <env_port>
 ```
 
-## Step 3: Run Training
+
+## Step 3: Generate Training Data
+
+```bash
+python opentinker/data_preprocess/geo3k_multiturn_w_interaction.py \
+    --local_save_dir=data/geo3k_multiturn_w_tool
+```
+
+## Step 4: Run Training
 
 ```bash
 python opentinker/client/geo3k_rl.py \
     tokenizer_path=Qwen/Qwen2-VL-2B-Instruct \
     batch_size=16 \
     val_batch_size=64 \
+    data_path=data/geo3k_multiturn_w_tool/train.parquet \
+    val_data_path=data/geo3k_multiturn_w_tool/test.parquet \
     num_epochs=5 \
     save_freq=1000 \
     test_freq=5 \
