@@ -21,7 +21,14 @@ bash opentinker/scripts/launch_scheduler.sh --scheduler-port <scheduler_port>
 python opentinker/environment/math/math_server.py --port <env_port>
 ```
 
-## Step 3: Run LoRA Training
+## Step 3: Generate Training Data
+
+```bash
+python opentinker/data_preprocess/math_multiturn_w_interaction.py \
+    --local_save_dir=data/math_agentloop
+```
+
+## Step 4: Run LoRA Training
 
 ```bash
 python opentinker/client/math_rl.py \
