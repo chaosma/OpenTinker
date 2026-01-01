@@ -28,7 +28,7 @@ def main(args):
 
     job_result = scheduler_client.submit_job(
         config=OmegaConf.to_container(args, resolve=True),
-        enable_agent_loop=True,
+        enable_agent_loop=False,  # Use sync mode with HF rollout
         wandb_key=args.get("wandb_key"),
         num_gpus=args.get("num_gpus"),
     )

@@ -1,10 +1,10 @@
 # Job Scheduler Configuration
 
 # GPU IDs available for job allocation
-available_gpus: [0, 1, 2, 3]
+available_gpus: [0]
 
 # Number of GPUs to allocate per job
-gpus_per_job: 4
+gpus_per_job: 1
 
 # Port range for spawned training servers [min, max]
 # Set to null to auto-detect available ports

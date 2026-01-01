@@ -58,6 +58,8 @@ actor_rollout_ref:
 
   # Rollout model config.
   rollout:
+    # Rollout backend: hf (HuggingFace), vllm, or sglang
+    name: hf
     # for huge model, layered summon can save memory (prevent OOM) but make it slower
     layered_summon: False
 

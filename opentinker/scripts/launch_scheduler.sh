@@ -6,7 +6,7 @@ export CUDA_HOME=$HOME/local/cuda-12.8
 export PATH=$CUDA_HOME/bin:$PATH
 export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
 
-export ROLLOUT_TRACE_DIR="/home/haofeiy2/OpenTinker/traces"
+export ROLLOUT_TRACE_DIR="$HOME/chao/OpenTinker/traces"
 export NVCC_EXECUTABLE=$CUDA_HOME/bin/nvcc
 export TORCH_CUDA_ARCH_LIST="9.0"
 export FLASHINFER_HOMOGENEOUS_MS=1

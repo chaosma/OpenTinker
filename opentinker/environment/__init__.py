@@ -32,14 +32,26 @@ from opentinker.environment.base_game_server import (
     run_game_server,
 )
 
-from opentinker.environment.inference_pipeline import (
-    InferencePipeline,
-    InferenceResult,
-    RemoteEnvironmentClient,
-    run_inference,
-    load_samples,
-    generate_samples,
-)
+# Inference pipeline (optional - requires vllm)
+try:
+    from opentinker.environment.inference_pipeline import (
+        InferencePipeline,
+        InferenceResult,
+        RemoteEnvironmentClient,
+        run_inference,
+        load_samples,
+        generate_samples,
+    )
+    _HAS_INFERENCE = True
+except ImportError:
+    # vllm not installed - inference features not available
+    _HAS_INFERENCE = False
+    InferencePipeline = None
+    InferenceResult = None
+    RemoteEnvironmentClient = None
+    run_inference = None
+    load_samples = None
+    generate_samples = None
 
 __all__ = [
     # Base
